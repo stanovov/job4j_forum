@@ -1,11 +1,17 @@
 package ru.job4j.forum.model;
 
+import javax.persistence.*;
 import java.util.Objects;
 
+@Entity
+@Table(name = "authorities")
 public class Authority {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(nullable = false, unique = true)
     private String name;
 
     public static Authority of(String name) {

@@ -2,14 +2,14 @@ package ru.job4j.forum.service;
 
 import org.springframework.stereotype.Service;
 import ru.job4j.forum.model.Authority;
-import ru.job4j.forum.repository.AuthorityMem;
+import ru.job4j.forum.repository.AuthorityRepository;
 
 @Service
 public class AuthorityService {
 
-    private final AuthorityMem authorityRepository;
+    private final AuthorityRepository authorityRepository;
 
-    public AuthorityService(AuthorityMem authorityRepository) {
+    public AuthorityService(AuthorityRepository authorityRepository) {
         this.authorityRepository = authorityRepository;
     }
 

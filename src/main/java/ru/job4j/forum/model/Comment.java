@@ -1,21 +1,39 @@
 package ru.job4j.forum.model;
 
+import org.hibernate.annotations.CreationTimestamp;
+
+import javax.persistence.*;
 import java.util.Calendar;
 import java.util.Objects;
 
+@Entity
+@Table(name = "comments")
 public class Comment {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(nullable = false)
     private String text;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false, updatable = false)
+    @CreationTimestamp
     private Calendar created;
 
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private Post post;
+
+    @ManyToOne
+    @JoinColumn(name = "author_id", nullable = false)
     private User author;
 
-    public static Comment of(String text, User author) {
+    public static Comment of(String text, Post post, User author) {
         Comment comment = new Comment();
         comment.setText(text);
+        comment.setPost(post);
         comment.setAuthor(author);
         comment.setCreated(Calendar.getInstance());
         return comment;
@@ -43,6 +61,14 @@ public class Comment {
 
     public void setCreated(Calendar created) {
         this.created = created;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
     }
 
     public User getAuthor() {

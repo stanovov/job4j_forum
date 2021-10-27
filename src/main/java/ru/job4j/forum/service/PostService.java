@@ -1,47 +1,38 @@
 package ru.job4j.forum.service;
 
 import org.springframework.stereotype.Service;
-import ru.job4j.forum.model.Comment;
 import ru.job4j.forum.model.Post;
-import ru.job4j.forum.repository.PostMem;
+import ru.job4j.forum.repository.PostRepository;
 
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class PostService {
 
-    private final PostMem postRepository;
+    private final PostRepository postRepository;
 
-    public PostService(PostMem postRepository) {
+    public PostService(PostRepository postRepository) {
         this.postRepository = postRepository;
     }
 
     public void savePost(Post post) {
-        Post original = postRepository.findPostById(post.getId());
-        if (original == null) {
-            post.setCreated(Calendar.getInstance());
-        } else {
-            post.setCreated(original.getCreated());
-            original.getComments()
-                    .forEach(post::addComment);
-        }
-        postRepository.savePost(post);
-    }
-
-    public void saveComment(Comment comment, int postId) {
-        postRepository.saveComment(comment, postId);
+        postRepository.findById(post.getId()).ifPresent(original -> original.getComments()
+                .forEach(post::addComment));
+        postRepository.save(post);
     }
 
     public void deletePost(int id) {
-        postRepository.deletePost(postRepository.findPostById(id));
+        postRepository.deleteById(id);
     }
 
     public Post findPostById(int id) {
-        return postRepository.findPostById(id);
+        return postRepository.findById(id).orElse(null);
     }
 
     public List<Post> findAllPosts() {
-        return postRepository.findAllPostsOrderByIdDesc();
+        List<Post> posts = new ArrayList<>();
+        postRepository.findAll().forEach(posts::add);
+        return posts;
     }
 }
