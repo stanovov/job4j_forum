@@ -1,13 +1,17 @@
 package ru.job4j.forum.control;
 
+import static org.junit.Assert.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 import static org.hamcrest.Matchers.*;
 
 import org.junit.jupiter.api.Test;
 
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -91,5 +95,31 @@ public class PostControlTest {
         mockMvc.perform(get("/post/edit"))
                 .andDo(print())
                 .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @WithMockUser
+    public void whenSavePostShouldReturnDefaultMessage() throws Exception {
+        mockMvc.perform(post("/post/save")
+                        .param("name", "Куплю ладу-грант. Дорого.")
+                        .param("description", "Рассматриваю пробег до 50 тысяч"))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+        ArgumentCaptor<Post> argument = ArgumentCaptor.forClass(Post.class);
+        verify(postService).savePost(argument.capture());
+        assertThat(argument.getValue().getName(), is("Куплю ладу-грант. Дорого."));
+        assertThat(argument.getValue().getDescription(), is("Рассматриваю пробег до 50 тысяч"));
+    }
+
+    @Test
+    @WithMockUser
+    public void whenDeletePostShouldDefaultMessage() throws Exception {
+        mockMvc.perform(post("/post/delete")
+                .param("id", "1"))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+        ArgumentCaptor<Integer> argument = ArgumentCaptor.forClass(Integer.class);
+        verify(postService).deletePost(argument.capture());
+        assertThat(argument.getValue(), is(1));
     }
 }
