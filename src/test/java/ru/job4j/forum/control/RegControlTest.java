@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.job4j.forum.Main;
@@ -28,9 +27,6 @@ public class RegControlTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private PasswordEncoder encoder;
 
     @MockBean
     private UserService userService;
@@ -56,7 +52,7 @@ public class RegControlTest {
         ArgumentCaptor<User> userArgument = ArgumentCaptor.forClass(User.class);
         verify(userService).save(userArgument.capture());
         assertThat(userArgument.getValue().getUsername(), is("spammer"));
-        assertThat(encoder.matches("12345", userArgument.getValue().getPassword()), is(true));
+        assertThat(userArgument.getValue().getPassword(), is("12345"));
     }
 
     @Test
