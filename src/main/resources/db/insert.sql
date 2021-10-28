@@ -1,16 +1,3 @@
-CREATE TABLE authorities(
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL UNIQUE
-);
-
-CREATE TABLE users(
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(100) NOT NULL,
-    enabled BOOLEAN DEFAULT true,
-    authority_id INT NOT NULL REFERENCES authorities(id)
-);
-
 INSERT INTO authorities (name) VALUES ('ROLE_USER');
 INSERT INTO authorities (name) VALUES ('ROLE_ADMIN');
 
@@ -23,3 +10,13 @@ VALUES ('user', '$2a$10$Y8yfdaLsUw8xoHwMi6w4FuSQD/2TJJWY.PfkwEyrddzSztPjDSgxq', 
 INSERT INTO users (username, password, enabled, authority_id)
 VALUES ('spammer', '$2a$10$her8BFoosCBluua0dN0fpum.AeGsjej438qgJt4Sz9UkE8rXPTguy', true,
         (SELECT id FROM authorities WHERE name = 'ROLE_USER'));
+
+INSERT INTO posts (name, description, author_id)
+VALUES ('О чем этот форум', 'Этот форум создан с целью ознакомления и обучения с Spring BOOT', 1),
+       ('Правила форума.', 'Спам на форуме запрещен', 1);
+
+INSERT INTO posts(name, description, author_id)
+VALUES ('Продаю гараж.', 'Хороший гараж', 2);
+
+INSERT INTO comments(text, post_id, author_id)
+VALUES ('Я первый!', 3, 3), ('И второй', 3, 3);

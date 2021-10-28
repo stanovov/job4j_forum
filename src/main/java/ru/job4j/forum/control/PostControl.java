@@ -26,20 +26,23 @@ public class PostControl {
 
     @GetMapping("/post")
     public String post(@RequestParam int id, Model model) {
-        model.addAttribute("user", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("user", userService.findByUsername(user.getUsername()));
         model.addAttribute("post", postService.findPostById(id));
         return "post";
     }
 
     @GetMapping("/post/create")
     public String create(Model model) {
-        model.addAttribute("user", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("user", userService.findByUsername(user.getUsername()));
         return "post/create";
     }
 
     @GetMapping("/post/edit")
     public String edit(@RequestParam int id, Model model) {
-        model.addAttribute("user", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("user", userService.findByUsername(user.getUsername()));
         model.addAttribute("post", postService.findPostById(id));
         return "post/edit";
     }
